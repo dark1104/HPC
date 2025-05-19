@@ -1,32 +1,33 @@
-This error is due to your CentOS 7 system or Python environment not trusting the SSL certificates required to connect to https://huggingface.co.
+This confirms that your CentOS 7 system does not have the necessary CA certificates to verify SSL certificates, which is causing the Hugging Face login and model/tokenizer loading to fail.
+
+Fix SSL Certificate Issue on CentOS 7
+
+Run the following steps:
 
 
 ---
 
-✅ Solution: Install CA Certificates
+1. Install or update CA certificates
 
-You need to ensure that your system has the correct Certificate Authority (CA) bundle installed and trusted.
-
-Step 1: Install CA certificates
-
-sudo yum install ca-certificates -y
-sudo update-ca-trust force-enable
-sudo update-ca-trust extract
+yum install -y ca-certificates
+update-ca-trust force-enable
+update-ca-trust extract
 
 
 ---
 
-✅ Step 2: Rebuild SSL in your virtual environment
+2. Verify that certifi is updated in your virtualenv
 
-Sometimes, Python built on old systems misses modern CA roots. You may need to reinstall certifi:
+pip install --upgrade certifi
 
-/myenv/bin/pip install --upgrade certifi
 
-Optionally, point Python explicitly to the correct cert bundle:
+---
+
+3. Set the correct certificate path (one-time test):
 
 export SSL_CERT_FILE=$(python -m certifi)
 
-You can also add this to your ~/.bashrc:
+If this works, make it permanent:
 
 echo 'export SSL_CERT_FILE=$(python -m certifi)' >> ~/.bashrc
 source ~/.bashrc
@@ -34,27 +35,18 @@ source ~/.bashrc
 
 ---
 
-✅ Step 3: Test connection
-
-Try a simple HTTPS test:
+4. Test with curl again
 
 curl https://huggingface.co
 
-If it still gives a cert error, your system's root CA is broken or outdated. Try this instead:
-
-yum update -y nss openssl
+If it no longer throws the SSL error, you're good.
 
 
 ---
 
-✅ Step 4: Re-run your script
+5. Restart your app
 
-Once certs are in place:
-
-export HUGGINGFACE_HUB_TOKEN=your_token_here
 ./start.sh
 
+Let me know what happens — if the SSL issue is resolved, your model should load fine.
 
----
-
-Let me know if you want to disable SSL verification as a last resort (not recommended for production), or if you want to download the model manually and load it from a local directory to avoid internet issues entirely.
