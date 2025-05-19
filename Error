@@ -1,27 +1,49 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
-import os
-
-model_name = "meta-llama/Meta-Llama-3-8B"
-
-# Load Hugging Face token from environment
-hf_token = os.getenv("HUGGINGFACE_HUB_TOKEN")
-
-if not hf_token:
-    raise EnvironmentError("HUGGINGFACE_HUB_TOKEN is not set in the environment.")
-
-print("Loading tokenizer...")
-tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
-
-print("Loading model...")
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    token=hf_token,
-    torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-    device_map="auto"
-)
-
-def generate_text(prompt: str, max_new_tokens: int = 100) -> str:
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-    outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+(myenv) [root@cheux171centos7 Ollama]# ./start.sh
+Loading tokenizer...
+Traceback (most recent call last):
+  File "/root/Ollama/myenv/bin/uvicorn", line 8, in <module>
+    sys.exit(main())
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/click/core.py", line 1161, in __call__
+    return self.main(*args, **kwargs)
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/click/core.py", line 1082, in main
+    rv = self.invoke(ctx)
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/click/core.py", line 1443, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/click/core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/main.py", line 413, in main
+    run(
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/main.py", line 580, in run
+    server.run()
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/server.py", line 66, in run
+    return asyncio.run(self.serve(sockets=sockets))
+  File "/usr/local/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/local/lib/python3.9/asyncio/base_events.py", line 642, in run_until_complete
+    return future.result()
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/server.py", line 70, in serve
+    await self._serve(sockets)
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/server.py", line 77, in _serve
+    config.load()
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/config.py", line 435, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/usr/local/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/root/Ollama/app/main.py", line 4, in <module>
+    from app.model import generate_text
+  File "/root/Ollama/app/model.py", line 14, in <module>
+    tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/transformers/models/auto/tokenization_auto.py", line 1028, in from_pretrained
+    return tokenizer_class_fast.from_pretrained(pretrained_model_name_or_path, *inputs, **kwargs)
+  File "/root/Ollama/myenv/lib/python3.9/site-packages/transformers/tokenization_utils_base.py", line 2046, in from_pretrained
+    raise EnvironmentError(
+OSError: Can't load tokenizer for 'meta-llama/Meta-Llama-3-8B'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'meta-llama/Meta-Llama-3-8B' is the correct path to a directory containing all relevant files for a LlamaTokenizerFast tokenizer.
+(myenv) [root@cheux171centos7 Ollama]#
