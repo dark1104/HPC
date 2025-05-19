@@ -50,3 +50,6 @@ If it no longer throws the SSL error, you're good.
 
 Let me know what happens — if the SSL issue is resolved, your model should load fine.
 
+
+
+python -c "import requests; print(requests.get('https://huggingface.co').status_code)"
