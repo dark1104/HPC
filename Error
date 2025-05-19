@@ -1,100 +1,60 @@
-(myenv) [root@cheux171centos7 Ollama]# ./start.sh
-Traceback (most recent call last):
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 716, in urlopen
-    httplib_response = self._make_request(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 404, in _make_request
-    self._validate_conn(conn)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 1061, in _validate_conn
-    conn.connect()
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connection.py", line 419, in connect
-    self.sock = ssl_wrap_socket(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 458, in ssl_wrap_socket
-    ssl_sock = _ssl_wrap_socket_impl(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 502, in _ssl_wrap_socket_impl
-    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
-  File "/usr/local/lib/python3.9/ssl.py", line 500, in wrap_socket
-    return self.sslsocket_class._create(
-  File "/usr/local/lib/python3.9/ssl.py", line 1040, in _create
-    self.do_handshake()
-  File "/usr/local/lib/python3.9/ssl.py", line 1309, in do_handshake
-    self._sslobj.do_handshake()
-ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)
+This error is due to your CentOS 7 system or Python environment not trusting the SSL certificates required to connect to https://huggingface.co.
 
-During handling of the above exception, another exception occurred:
 
-Traceback (most recent call last):
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/adapters.py", line 667, in send
-    resp = conn.urlopen(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 802, in urlopen
-    retries = retries.increment(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/util/retry.py", line 594, in increment
-    raise MaxRetryError(_pool, url, error or ResponseError(cause))
-urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/whoami-v2 (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)')))
+---
 
-During handling of the above exception, another exception occurred:
+✅ Solution: Install CA Certificates
 
-Traceback (most recent call last):
-  File "/root/Ollama/myenv/bin/uvicorn", line 8, in <module>
-    sys.exit(main())
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/click/core.py", line 1161, in __call__
-    return self.main(*args, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/click/core.py", line 1082, in main
-    rv = self.invoke(ctx)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/click/core.py", line 1443, in invoke
-    return ctx.invoke(self.callback, **ctx.params)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/click/core.py", line 788, in invoke
-    return __callback(*args, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/main.py", line 413, in main
-    run(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/main.py", line 580, in run
-    server.run()
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/server.py", line 66, in run
-    return asyncio.run(self.serve(sockets=sockets))
-  File "/usr/local/lib/python3.9/asyncio/runners.py", line 44, in run
-    return loop.run_until_complete(main)
-  File "/usr/local/lib/python3.9/asyncio/base_events.py", line 642, in run_until_complete
-    return future.result()
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/server.py", line 70, in serve
-    await self._serve(sockets)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/server.py", line 77, in _serve
-    config.load()
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/config.py", line 435, in load
-    self.loaded_app = import_from_string(self.app)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/uvicorn/importer.py", line 19, in import_from_string
-    module = importlib.import_module(module_str)
-  File "/usr/local/lib/python3.9/importlib/__init__.py", line 127, in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
-  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
-  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
-  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
-  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
-  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
-  File "/root/Ollama/app/main.py", line 4, in <module>
-    from app.model import generate_text
-  File "/root/Ollama/app/model.py", line 13, in <module>
-    login(token=hf_token)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/huggingface_hub/utils/_deprecation.py", line 101, in inner_f
-    return f(*args, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/huggingface_hub/utils/_deprecation.py", line 31, in inner_f
-    return f(*args, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/huggingface_hub/_login.py", line 126, in login
-    _login(token, add_to_git_credential=add_to_git_credential)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/huggingface_hub/_login.py", line 404, in _login
-    token_info = whoami(token)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
-    return fn(*args, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/huggingface_hub/hf_api.py", line 1741, in whoami
-    r = get_session().get(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/sessions.py", line 602, in get
-    return self.request("GET", url, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/sessions.py", line 589, in request
-    resp = self.send(prep, **send_kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/sessions.py", line 703, in send
-    r = adapter.send(request, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/huggingface_hub/utils/_http.py", line 96, in send
-    return super().send(request, *args, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/adapters.py", line 698, in send
-    raise SSLError(e, request=request)
-requests.exceptions.SSLError: (MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/whoami-v2 (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)')))"), '(Request ID: 3399e443-3c48-4129-8b07-b92f338942ae)')
-(myenv) [root@cheux171centos7 Ollama]#
+You need to ensure that your system has the correct Certificate Authority (CA) bundle installed and trusted.
+
+Step 1: Install CA certificates
+
+sudo yum install ca-certificates -y
+sudo update-ca-trust force-enable
+sudo update-ca-trust extract
+
+
+---
+
+✅ Step 2: Rebuild SSL in your virtual environment
+
+Sometimes, Python built on old systems misses modern CA roots. You may need to reinstall certifi:
+
+/myenv/bin/pip install --upgrade certifi
+
+Optionally, point Python explicitly to the correct cert bundle:
+
+export SSL_CERT_FILE=$(python -m certifi)
+
+You can also add this to your ~/.bashrc:
+
+echo 'export SSL_CERT_FILE=$(python -m certifi)' >> ~/.bashrc
+source ~/.bashrc
+
+
+---
+
+✅ Step 3: Test connection
+
+Try a simple HTTPS test:
+
+curl https://huggingface.co
+
+If it still gives a cert error, your system's root CA is broken or outdated. Try this instead:
+
+yum update -y nss openssl
+
+
+---
+
+✅ Step 4: Re-run your script
+
+Once certs are in place:
+
+export HUGGINGFACE_HUB_TOKEN=your_token_here
+./start.sh
+
+
+---
+
+Let me know if you want to disable SSL verification as a last resort (not recommended for production), or if you want to download the model manually and load it from a local directory to avoid internet issues entirely.
