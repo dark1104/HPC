@@ -64,3 +64,66 @@ python -c "import requests; print(requests.get('https://huggingface.co').status_
 This ensures your Python environment uses OpenSSL 1.1.1w, solving the certificate and urllib3 issues.
 
 Let me know if you'd like a one-liner for installing Python with OpenSSL, or help cleaning up the old environment.
+
+
+
+
+
+
+
+
+
+
+
+.......,..................
+
+
+
+
+This confirms the issue: your Python environment is still using a version of Python compiled against OpenSSL 1.0.2k, not the newer OpenSSL 1.1.1w you installed.
+
+Even though you built OpenSSL 1.1.1w, your Python interpreter wasn’t compiled to use it, so the ssl module still links to the old system OpenSSL.
+
+
+---
+
+To fix this, here's what you need to do step by step:
+
+1. Recompile Python 3.9.19 and explicitly link it to OpenSSL 1.1.1w
+
+From inside the Python-3.9.19 source folder:
+
+# Assuming OpenSSL 1.1.1w is installed at /usr/local/openssl
+./configure --prefix=/usr/local/python3.9.19 --with-openssl=/usr/local/openssl
+make -j$(nproc)
+make altinstall
+
+> Use make altinstall instead of make install to avoid overwriting the system Python.
+
+
+
+2. Verify Python is using the right OpenSSL
+
+/usr/local/python3.9.19/bin/python3.9 -m ssl
+
+The output should show:
+
+OpenSSL version: OpenSSL 1.1.1w ...
+
+3. Create a new virtual environment with the new Python build
+
+/usr/local/python3.9.19/bin/python3.9 -m venv ~/newenv
+source ~/newenv/bin/activate
+pip install --upgrade pip
+pip install requests
+
+Then test again:
+
+python -c "import requests; print(requests.get('https://huggingface.co').status_code)"
+
+You should get 200 without verify=False.
+
+
+---
+
+Let me know if you'd like a ready-to-copy command block to run the full process.
