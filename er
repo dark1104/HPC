@@ -18,3 +18,49 @@ make: *** No targets specified and no makefile found.  Stop.
 (myenv) [root@cheux171centos7 src]# make install
 make: *** No rule to make target `install'.  Stop.
 (myenv) [root@cheux171centos7 src]#
+
+
+
+
+
+
+
+
+Great — that means OpenSSL 1.1.1w is now installed and detected correctly in your shell!
+
+However, Python still needs to be recompiled (or at least re-linked) to use this newer OpenSSL version. The Python ssl module is still pointing to the older system OpenSSL (1.0.2k), which is causing the urllib3 and requests SSL errors.
+
+
+---
+
+To fix this, you need to:
+
+1. Rebuild Python from source and link it to OpenSSL 1.1.1w
+
+Here’s how:
+
+cd /usr/local/src
+curl -O https://www.python.org/ftp/python/3.9.19/Python-3.9.19.tgz
+tar xzf Python-3.9.19.tgz
+cd Python-3.9.19
+./configure --prefix=/usr/local/python3.9 --with-openssl=/usr/local/openssl
+make -j$(nproc)
+make install
+
+2. Create a new virtual environment using the new Python
+
+/usr/local/python3.9/bin/python3 -m venv /root/ollama/newenv
+source /root/ollama/newenv/bin/activate
+pip install --upgrade pip
+pip install requests
+
+Then test again:
+
+python -c "import requests; print(requests.get('https://huggingface.co').status_code)"
+
+
+---
+
+This ensures your Python environment uses OpenSSL 1.1.1w, solving the certificate and urllib3 issues.
+
+Let me know if you'd like a one-liner for installing Python with OpenSSL, or help cleaning up the old environment.
