@@ -1,111 +1,47 @@
-(myenv) [root@cheux171centos7 Ollama]# python -m certifi
-/root/Ollama/myenv/lib/python3.9/site-packages/certifi/cacert.pem
-(myenv) [root@cheux171centos7 Ollama]# clear
-(myenv) [root@cheux171centos7 Ollama]# export SSL_CERT_FILE=$(python -m certifi)
-(myenv) [root@cheux171centos7 Ollama]# echo $SSL_CERT_FILE
-/root/Ollama/myenv/lib/python3.9/site-packages/certifi/cacert.pem
-(myenv) [root@cheux171centos7 Ollama]# python -c "import requests; print(requests.get('https://huggingface.co').status_code)"
-Traceback (most recent call last):
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 716, in urlopen
-    httplib_response = self._make_request(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 404, in _make_request
-    self._validate_conn(conn)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 1061, in _validate_conn
-    conn.connect()
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connection.py", line 419, in connect
-    self.sock = ssl_wrap_socket(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 458, in ssl_wrap_socket
-    ssl_sock = _ssl_wrap_socket_impl(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 502, in _ssl_wrap_socket_impl
-    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
-  File "/usr/local/lib/python3.9/ssl.py", line 500, in wrap_socket
-    return self.sslsocket_class._create(
-  File "/usr/local/lib/python3.9/ssl.py", line 1040, in _create
-    self.do_handshake()
-  File "/usr/local/lib/python3.9/ssl.py", line 1309, in do_handshake
-    self._sslobj.do_handshake()
-ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)
+You're on CentOS 7, which comes with OpenSSL 1.0.2k, but urllib3 v2+ and other modern tools require OpenSSL ≥ 1.1.1 or even 3.x. Upgrading OpenSSL on CentOS 7 is possible but requires care to avoid breaking system packages.
 
-During handling of the above exception, another exception occurred:
 
-Traceback (most recent call last):
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/adapters.py", line 667, in send
-    resp = conn.urlopen(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 802, in urlopen
-    retries = retries.increment(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/util/retry.py", line 594, in increment
-    raise MaxRetryError(_pool, url, error or ResponseError(cause))
-urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)')))
+---
 
-During handling of the above exception, another exception occurred:
+Option 1: Install a newer OpenSSL in parallel (safe option)
 
-Traceback (most recent call last):
-  File "<string>", line 1, in <module>
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/api.py", line 73, in get
-    return request("get", url, params=params, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/api.py", line 59, in request
-    return session.request(method=method, url=url, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/sessions.py", line 589, in request
-    resp = self.send(prep, **send_kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/sessions.py", line 703, in send
-    r = adapter.send(request, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/adapters.py", line 698, in send
-    raise SSLError(e, request=request)
-requests.exceptions.SSLError: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)')))
-(myenv) [root@cheux171centos7 Ollama]# python -c "import requests; print(requests.get('https://huggingface.co', verify=False).status_co
-de)"
-/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py:1064: InsecureRequestWarning: Unverified HTTPS request is being made to host 'huggingface.co'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
-  warnings.warn(
-200
-(myenv) [root@cheux171centos7 Ollama]# python -m certifi
-/root/Ollama/myenv/lib/python3.9/site-packages/certifi/cacert.pem
-(myenv) [root@cheux171centos7 Ollama]# export SSL_CERT_FILE=$(python -m certifi)
-(myenv) [root@cheux171centos7 Ollama]# python -c "import requests; print(requests.get('https://huggingface.co').status_code)"
-Traceback (most recent call last):
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 716, in urlopen
-    httplib_response = self._make_request(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 404, in _make_request
-    self._validate_conn(conn)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 1061, in _validate_conn
-    conn.connect()
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connection.py", line 419, in connect
-    self.sock = ssl_wrap_socket(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 458, in ssl_wrap_socket
-    ssl_sock = _ssl_wrap_socket_impl(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 502, in _ssl_wrap_socket_impl
-    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
-  File "/usr/local/lib/python3.9/ssl.py", line 500, in wrap_socket
-    return self.sslsocket_class._create(
-  File "/usr/local/lib/python3.9/ssl.py", line 1040, in _create
-    self.do_handshake()
-  File "/usr/local/lib/python3.9/ssl.py", line 1309, in do_handshake
-    self._sslobj.do_handshake()
-ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)
+1. Install development tools and dependencies:
 
-During handling of the above exception, another exception occurred:
+yum groupinstall -y "Development Tools"
+yum install -y gcc perl-core zlib-devel
 
-Traceback (most recent call last):
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/adapters.py", line 667, in send
-    resp = conn.urlopen(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 802, in urlopen
-    retries = retries.increment(
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/urllib3/util/retry.py", line 594, in increment
-    raise MaxRetryError(_pool, url, error or ResponseError(cause))
-urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)')))
+2. Download and compile OpenSSL (1.1.1 or 3.x):
 
-During handling of the above exception, another exception occurred:
+cd /usr/local/src
+curl -O https://www.openssl.org/source/openssl-1.1.1w.tar.gz
+tar xvf openssl-1.1.1w.tar.gz
+cd openssl-1.1.1w
+./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl shared zlib
+make -j$(nproc)
+make install
 
-Traceback (most recent call last):
-  File "<string>", line 1, in <module>
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/api.py", line 73, in get
-    return request("get", url, params=params, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/api.py", line 59, in request
-    return session.request(method=method, url=url, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/sessions.py", line 589, in request
-    resp = self.send(prep, **send_kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/sessions.py", line 703, in send
-    r = adapter.send(request, **kwargs)
-  File "/root/Ollama/myenv/lib/python3.9/site-packages/requests/adapters.py", line 698, in send
-    raise SSLError(e, request=request)
-requests.exceptions.SSLError: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)')))
-(myenv) [root@cheux171centos7 Ollama]#
+3. Update environment to use the new OpenSSL:
+
+export PATH=/usr/local/openssl/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/openssl/lib
+export PKG_CONFIG_PATH=/usr/local/openssl/lib/pkgconfig
+
+To make it permanent, add these to ~/.bashrc or /etc/profile.d/openssl.sh.
+
+4. Verify:
+
+openssl version
+
+Should show: OpenSSL 1.1.1w
+
+
+---
+
+Option 2: Use a newer Python compiled with newer OpenSSL (recommended for Python apps)
+
+If your system Python links to old OpenSSL, consider installing Python from source with a new OpenSSL version. I can walk you through that as well if needed.
+
+
+---
+
+Let me know which route you prefer (system-wide or Python-specific), and I’ll give you tailored next steps.
