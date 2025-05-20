@@ -1,0 +1,20 @@
+(myenv) [root@cheux171centos7 Ollama]# cd /usr/local/src
+(myenv) [root@cheux171centos7 src]# curl -O https://www.openssl.org/source/openssl-1.1.1w.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   169  100   169    0     0     27      0  0:00:06  0:00:06 --:--:--    45
+(myenv) [root@cheux171centos7 src]# tar xvf openssl-1.1.1w.tar.gz
+tar: This does not look like a tar archive
+
+gzip: stdin: not in gzip format
+tar: Child returned status 1
+tar: Error is not recoverable: exiting now
+(myenv) [root@cheux171centos7 src]# cd openssl-1.1.1w
+-bash: cd: openssl-1.1.1w: No such file or directory
+(myenv) [root@cheux171centos7 src]# ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl shared zlib
+-bash: ./config: No such file or directory
+(myenv) [root@cheux171centos7 src]# make -j$(nproc)
+make: *** No targets specified and no makefile found.  Stop.
+(myenv) [root@cheux171centos7 src]# make install
+make: *** No rule to make target `install'.  Stop.
+(myenv) [root@cheux171centos7 src]#
